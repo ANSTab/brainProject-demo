@@ -1,5 +1,6 @@
 package com.tabachenko.test1Brain;
 
+import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -9,6 +10,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class BrainAutomation {
     private ChromeDriver driver;
@@ -44,14 +46,17 @@ public class BrainAutomation {
     }
 
     void menu() {
+
+        WebElement webElementFirst = driver.findElementByXPath("(//span[@class=\"menu-outer-text\"])[1]");
+        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         Actions actions = new Actions(driver);
         WebDriverWait wait = new WebDriverWait(driver, 10);
 
         List<WebElement> webElementList = driver.findElements(By.xpath("//span[@class=\"menu-outer-text\"]"));
-        for (WebElement element : webElementList) {
+        /*for (WebElement element : webElementList) {
             wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
             actions.moveToElement(element).build().perform();
-
-        }
+        }*/
+        webElementList.stream().forEach(x -> new Actions(driver).moveToElement(x).build().perform());
     }
 }
