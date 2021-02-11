@@ -23,5 +23,9 @@ public class LauncherBrain {
         brainAutomation.enterForPage();
         brainAutomation.logInBrain("+38 (067) 472-59-58", "50175425");
         brainAutomation.clickEnter();
+        brainAutomation.menu();
+
+
+      //  driver.quit();
     }
 }
