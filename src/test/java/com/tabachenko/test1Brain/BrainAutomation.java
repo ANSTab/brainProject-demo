@@ -58,5 +58,8 @@ public class BrainAutomation {
             actions.moveToElement(element).build().perform();
         }*/
         webElementList.stream().forEach(x -> new Actions(driver).moveToElement(x).build().perform());
+        boolean isPresent = driver.findElements(By.xpath("//div[@class=\"menu-inner-icon\"]")).size() > 0;
+        System.out.println(isPresent);
+
     }
 }
