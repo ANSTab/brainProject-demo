@@ -1,12 +1,14 @@
 package com.tabachenko.test1Brain;
 
-import org.junit.Assert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -37,8 +39,10 @@ public class BrainAutomation {
     }
 
     void logInBrain(String phone, String pass) {
-        driver.findElementByXPath("//input[@class=\"input-field phone_mask\"]").sendKeys(phone);
-        driver.findElementByXPath("//input[@class=\"input-field br-login-pass-field\"]").sendKeys(pass);
+        WebDriverWait wait = new WebDriverWait(driver, 15);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//p[@class=\"hello-title\"])[1]")));
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@class=\"input-field phone_mask\"]"))).sendKeys(phone);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@class=\"input-field br-login-pass-field\"]"))).sendKeys(pass);
     }
 
     void clickEnter() {
@@ -47,19 +51,18 @@ public class BrainAutomation {
 
     void menu() {
 
-        WebElement webElementFirst = driver.findElementByXPath("(//span[@class=\"menu-outer-text\"])[1]");
-        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
         Actions actions = new Actions(driver);
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-
+        WebDriverWait wait = new WebDriverWait(driver, 15);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@ class=\"menu-outer block-wrap\"]")));
         List<WebElement> webElementList = driver.findElements(By.xpath("//span[@class=\"menu-outer-text\"]"));
-        /*for (WebElement element : webElementList) {
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
+        for (WebElement element : webElementList) {
             actions.moveToElement(element).build().perform();
-        }*/
-        webElementList.stream().forEach(x -> new Actions(driver).moveToElement(x).build().perform());
-        boolean isPresent = driver.findElements(By.xpath("//div[@class=\"menu-inner-icon\"]")).size() > 0;
-        System.out.println(isPresent);
-
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
+            if (element.equals(driver.findElementByXPath("(//span[@class=\"menu-outer-text\"])[1]"))) {
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/category/Noutbuky-c1191/\"]")));
+                System.out.println("GOOOOOOD");
+            }
+        }
+        // webElementList.stream().forEach(x -> new Actions(driver).moveToElement(x).build().perform());
     }
 }
