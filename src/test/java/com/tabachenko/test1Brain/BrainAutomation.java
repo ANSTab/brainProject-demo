@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 public class BrainAutomation {
     private ChromeDriver driver;
-    Person person;
+    private List<WebElement> webElementList = null;
 
     public BrainAutomation(ChromeDriver driver) {
         this.driver = driver;
@@ -41,7 +41,7 @@ public class BrainAutomation {
     void logInBrain(String phone, String pass) {
         WebDriverWait wait = new WebDriverWait(driver, 15);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//p[@class=\"hello-title\"])[1]")));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@class=\"input-field phone_mask\"]"))).sendKeys(phone);
+        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@id=\"modal-login-phone-field\"]"))).sendKeys(phone);
         wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@class=\"input-field br-login-pass-field\"]"))).sendKeys(pass);
     }
 
@@ -49,20 +49,44 @@ public class BrainAutomation {
         driver.findElementByXPath("(//div[@class=\"text-center\"]/child::button)[1]").click();
     }
 
-    void menu() {
 
-        Actions actions = new Actions(driver);
-        WebDriverWait wait = new WebDriverWait(driver, 15);
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//ul[@ class=\"menu-outer block-wrap\"]")));
+    void menu(String item) {
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::ul[@ class=\"menu-outer block-wrap\"]")));
         List<WebElement> webElementList = driver.findElements(By.xpath("//span[@class=\"menu-outer-text\"]"));
         for (WebElement element : webElementList) {
-            actions.moveToElement(element).build().perform();
-            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
+            System.out.println(element.getText());
+            new Actions(driver).moveToElement(element).build().perform();
+            new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
             if (element.equals(driver.findElementByXPath("(//span[@class=\"menu-outer-text\"])[1]"))) {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/category/Noutbuky-c1191/\"]")));
-                System.out.println("GOOOOOOD");
+                new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/category/Noutbuky-c1191/\"]")));
             }
         }
         // webElementList.stream().forEach(x -> new Actions(driver).moveToElement(x).build().perform());
+    }
+
+    void menuAccessories() {
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::ul[@ class=\"menu-outer block-wrap\"]")));
+        WebElement accessories = new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/Komplektuyuchi_do_PK-c204/\"]")));
+        new Actions(driver).moveToElement(accessories).build().perform();
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/category/Procesory-c1097-128/\"]"))).click();
+    }
+
+    WebElement bulkhead(String item) {
+        WebElement webElement = null;
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::ul[@ class=\"menu-outer block-wrap\"]")));
+        webElementList = driver.findElements(By.xpath("//span[@class=\"menu-outer-text\"]"));
+        for (WebElement element : webElementList) {
+            System.out.println(element.getText());
+            new Actions(driver).moveToElement(element).build().perform();
+            new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
+          if (element.getText().equals(item)){
+              webElement=element;
+          }
+        }return webElement;
+    }
+
+    void itemSelection(String item) {
+        new BrainAutomation(driver).bulkhead(item).click();
+
     }
 }
