@@ -16,17 +16,19 @@ import java.util.stream.Stream;
 
 public class BrainAutomation {
     private ChromeDriver driver;
-    private List<WebElement> webElementList = null;
 
     public BrainAutomation(ChromeDriver driver) {
+
         this.driver = driver;
     }
 
     void openPage() {
+
         driver.get("https://brain.com.ua/ukr/");
     }
 
     void enterForPage() {
+
         driver.findElementByXPath("//button[@class = \"auth-popup-button\"]").click();
     }
 
@@ -41,20 +43,22 @@ public class BrainAutomation {
     void logInBrain(String phone, String pass) {
         WebDriverWait wait = new WebDriverWait(driver, 15);
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//p[@class=\"hello-title\"])[1]")));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@id=\"modal-login-phone-field\"]"))).sendKeys(phone);
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//input[@class=\"input-field br-login-pass-field\"]"))).sendKeys(pass);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id=\"modal-login-phone-field\"]"))).sendKeys(phone);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@class=\"input-field br-login-pass-field\"]"))).sendKeys(pass);
     }
 
     void clickEnter() {
+
         driver.findElementByXPath("(//div[@class=\"text-center\"]/child::button)[1]").click();
     }
 
-
     void menu(String item) {
         new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::ul[@ class=\"menu-outer block-wrap\"]")));
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"main-menu-button-wrap" +
+                "                                      with-disabled                                  disabled\"]"))).click();
         List<WebElement> webElementList = driver.findElements(By.xpath("//span[@class=\"menu-outer-text\"]"));
         for (WebElement element : webElementList) {
-            System.out.println(element.getText());
+            // System.out.println(element.getText());
             new Actions(driver).moveToElement(element).build().perform();
             new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
             if (element.equals(driver.findElementByXPath("(//span[@class=\"menu-outer-text\"])[1]"))) {
@@ -71,22 +75,36 @@ public class BrainAutomation {
         new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/category/Procesory-c1097-128/\"]"))).click();
     }
 
-    WebElement bulkhead(String item) {
-        WebElement webElement = null;
-        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::ul[@ class=\"menu-outer block-wrap\"]")));
-        webElementList = driver.findElements(By.xpath("//span[@class=\"menu-outer-text\"]"));
-        for (WebElement element : webElementList) {
-            System.out.println(element.getText());
-            new Actions(driver).moveToElement(element).build().perform();
-            new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
-          if (element.getText().equals(item)){
-              webElement=element;
-          }
-        }return webElement;
+    void sortByPrice() {
+        new Actions(driver).moveToElement(new WebDriverWait(driver, 15)
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()=\"Сортування за ціною\"]")))).build().perform();
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated
+                (By.xpath("(//li/child::a/child::button)[3]"))).click();
+        new Actions(driver).pause(2000).build().perform();
     }
 
-    void itemSelection(String item) {
-        new BrainAutomation(driver).bulkhead(item).click();
+    void maxPrice() {
+        new WebDriverWait(driver, 15).until(ExpectedConditions
+                .visibilityOfElementLocated(By.xpath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 0%;'])[1]")));
+        new WebDriverWait(driver, 15).until(ExpectedConditions
+                .visibilityOfElementLocated(By.xpath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 100%;'])[1]")));
+
+        WebElement element = driver.findElementByXPath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 0%;'])[1]");
+        WebElement target = driver.findElementByXPath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 100%;'])[1]");
+        new Actions(driver).clickAndHold(element).dragAndDrop(element, target).release().perform();
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated
+                (By.xpath("(//a[@data-linktpl=\"/ukr/category/Procesory-c1097-128/max_price=max_price;min_price=min_price;order=desc;sortby=price/\" " +
+                        "and @class=\"btn price_filter btn-sumbit\"])[1]"))).click();
+    }
+
+    void receivingElement() {
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"br-pp-img br-pp-img-grid\"]")));
+      //  WebElement element = driver.findElementByXPath("//div[@class=\"br-pp-img br-pp-img-grid\"]");
+        WebElement elementInfo = driver.findElementByXPath("(//a[@href=\"/ukr/Procesor_AMD_Ryzen_Threadripper_3990X_100-100000163WOF-p654465.html\"])[3]");
+        WebElement elementPrice = driver.findElementByXPath("(//span[@itemprop=\"price\"])[2]");
+        System.out.println(elementInfo.getText());
+        System.out.println(elementPrice.getText()+" грн.");
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"br-pp-img br-pp-img-grid\"]"))).click();
 
     }
 }

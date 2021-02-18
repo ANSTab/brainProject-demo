@@ -23,10 +23,14 @@ public class LauncherBrain {
         brainAutomation.enterForPage();
         brainAutomation.logInBrain("+38 (067) 472-59-58", "50175425");
         brainAutomation.clickEnter();
-        // brainAutomation.menu("Комплектуючі");
-        // brainAutomation.menuAccessories();
-       // brainAutomation.bulkhead("Комплектуючі");
-        brainAutomation.itemSelection("Комплектуючі");
+        brainAutomation.menu("Комплектуючі");
+        brainAutomation.menuAccessories();
+        brainAutomation.sortByPrice();
+        brainAutomation.maxPrice();
+        brainAutomation.receivingElement();
+
+
+
 
         //driver.quit();
     }
