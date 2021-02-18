@@ -5,8 +5,10 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class LauncherBrain {
+
 
     @Test
     public void brain() {
@@ -20,7 +22,6 @@ public class LauncherBrain {
 
         BrainAutomation brainAutomation = new BrainAutomation(driver);
         brainAutomation.openPage();
-        brainAutomation.enterForPage();
         brainAutomation.logInBrain("+38 (067) 472-59-58", "50175425");
         brainAutomation.clickEnter();
         brainAutomation.menu("Комплектуючі");
@@ -28,10 +29,6 @@ public class LauncherBrain {
         brainAutomation.sortByPrice();
         brainAutomation.maxPrice();
         brainAutomation.receivingElement();
-
-
-
-
-        //driver.quit();
+        driver.quit();
     }
 }
