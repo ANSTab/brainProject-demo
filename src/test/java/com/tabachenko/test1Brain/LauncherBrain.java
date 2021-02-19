@@ -5,8 +5,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
-
 public class LauncherBrain {
 
 
@@ -29,6 +27,7 @@ public class LauncherBrain {
         brainAutomation.sortByPrice();
         brainAutomation.maxPrice();
         brainAutomation.receivingElement();
-        driver.quit();
+       // driver.quit();
+
     }
 }

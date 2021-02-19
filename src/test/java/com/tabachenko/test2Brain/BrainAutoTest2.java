@@ -1,32 +1,31 @@
-package com.tabachenko.test1Brain;
+package com.tabachenko.test2Brain;
 
-import lombok.Getter;
-import lombok.extern.java.Log;
+import com.tabachenko.test1Brain.Person;
 import lombok.val;
 import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+public class BrainAutoTest2 {
 
-public class BrainAutomation {
 
     private ChromeDriver driver;
 
-    @val static Logger logger = Logger.getGlobal();
+    @val
+    static Logger logger = Logger.getGlobal();
 
-    public BrainAutomation(ChromeDriver driver) {
+
+    public BrainAutoTest2(ChromeDriver driver) {
         this.driver = driver;
     }
+
 
     void openPage() {
         logger.info("Відкриття сторінки");
@@ -54,38 +53,50 @@ public class BrainAutomation {
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@class=\"input-field br-login-pass-field\"]"))).sendKeys(pass);
     }
 
-    void clickEnter() {
+    void clickEnter() { //клік в особистий кабінет
         logger.info("Заходим в особистий кабінет");
         driver.findElementByXPath("(//div[@class=\"text-center\"]/child::button)[1]").click();
     }
 
-    void menu(String item) {
+    void menu(String item) { //головне меню
         logger.info("Перебираєм меню");
+        new Actions(driver).pause(2000).build().perform();
         new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::ul[@ class=\"menu-outer block-wrap\"]")));
         new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"main-menu-button-wrap" +
                 "                                      with-disabled                                  disabled\"]"))).click();
+
+        new Actions(driver).pause(3000).build().perform();
         List<WebElement> webElementList = driver.findElements(By.xpath("//span[@class=\"menu-outer-text\"]"));
+        logger.info("Пунк меню: комплектуючі");
+        new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
         for (WebElement element : webElementList) {
-            // System.out.println(element.getText());
-            new Actions(driver).moveToElement(element).build().perform();
-            new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//ul[@class=\"menu-inner block-wrap\"]")));
-            if (element.equals(driver.findElementByXPath("(//span[@class=\"menu-outer-text\"])[1]"))) {
-                logger.info("Перевірка наявності елемента на сторінці");
-                new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/category/Noutbuky-c1191/\"]")));
+            if (element.getText().contains(item)) {
+                element.click();
+                break;
             }
+            logger.info("метод основної менюшки закінчив роботу");
         }
         // webElementList.stream().forEach(x -> new Actions(driver).moveToElement(x).build().perform());
     }
 
-    void menuAccessories() {
-        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::ul[@ class=\"menu-outer block-wrap\"]")));
-        logger.info("Пунк меню: комплектуючі");
-        WebElement accessories = new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/Komplektuyuchi_do_PK-c204/\"]")));
-        new Actions(driver).moveToElement(accessories).build().perform();
-        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@href=\"https://brain.com.ua/ukr/category/Procesory-c1097-128/\"]"))).click();
+    void menuAccessories(String item) { // доп - менюшка
+        logger.info("метод ДОП.МЕНЮШКИ почав роботу");
+        new WebDriverWait(driver, 15).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//div[@id=\"cat210\" and @class=\"br-category-block br-cb-nocat\"]")));
+        new Actions(driver).pause(1000).build().perform();
+
+       // WebElement webElement = driver.findElementByXPath("//h2[@class=\"category-sub-title\" and text()=\"" + item + "\"]");
+        logger.info("Пошук елемента в доп меню");
+        List<WebElement> webElementList = driver.findElements(By.xpath("//h2[@class=\"category-sub-title\"]"));
+        for (WebElement webElement:webElementList) {
+            if (webElement.getText().contains(item)) {
+                webElement.click();
+                break;
+            }
+        }
+        logger.info("Знайшло елемент на сторінці");
     }
 
-    void sortByPrice() {
+    void sortByMaxPrice() { // сортування по ціні
         logger.info("Сортування : від дорожчого до дешевшого ");
         new Actions(driver).moveToElement(new WebDriverWait(driver, 15)
                 .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[text()=\"Сортування за ціною\"]")))).build().perform();
@@ -94,30 +105,46 @@ public class BrainAutomation {
         new Actions(driver).pause(2000).build().perform();
     }
 
-    void maxPrice() {
-
-        new WebDriverWait(driver, 15).until(ExpectedConditions
-                .visibilityOfElementLocated(By.xpath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 0%;'])[1]")));
+    void minPrice() {
+        logger.info("Встановлення мінімальної ціни");
         new WebDriverWait(driver, 15).until(ExpectedConditions
                 .visibilityOfElementLocated(By.xpath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 100%;'])[1]")));
+        new WebDriverWait(driver, 15).until(ExpectedConditions
+                .visibilityOfElementLocated(By.xpath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 0%;'])[1]")));
+
         WebElement element = driver.findElementByXPath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 0%;'])[1]");
         WebElement target = driver.findElementByXPath("(//span[@class='ui-slider-handle ui-state-default ui-corner-all' and @style='left: 100%;'])[1]");
         logger.info("Вказуєм найбільшу ціну");
-        new Actions(driver).clickAndHold(element).dragAndDrop(element, target).release().perform();
-        logger.info("Вибираєм елемент з найбільшою ціною");
+        new Actions(driver).clickAndHold(target).dragAndDrop(target, element).release().perform();
+        logger.info("Вибираєм елемент з найменшою ціною");
         new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated
-                (By.xpath("(//a[@data-linktpl=\"/ukr/category/Procesory-c1097-128/max_price=max_price;min_price=min_price;order=desc;sortby=price/\" " +
-                        "and @class=\"btn price_filter btn-sumbit\"])[1]"))).click();
+                (By.xpath("(//a[@class=\"btn price_filter btn-sumbit\"])[1]"))).click();
+        logger.info("Елемент з найменшою ціною - знайдений!");
     }
 
-    void receivingElement() {
-        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"br-pp-img br-pp-img-grid\"]")));
-        //  WebElement element = driver.findElementByXPath("//div[@class=\"br-pp-img br-pp-img-grid\"]");
-        logger.info("Інформація про елемент");
-        WebElement elementInfo = driver.findElementByXPath("(//a[@href=\"/ukr/Procesor_AMD_Ryzen_Threadripper_3990X_100-100000163WOF-p654465.html\"])[3]");
-        WebElement elementPrice = driver.findElementByXPath("(//span[@itemprop=\"price\"])[2]");
-        System.out.println(elementInfo.getText());
-        System.out.println(elementPrice.getText() + " грн.");
-        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"br-pp-img br-pp-img-grid\"]"))).click();
+    WebElement receivingElement() {
+        new Actions(driver).pause(2000).build().perform();
+        WebElement element = new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"br-pp-img br-pp-img-grid\"]")));
+        logger.info("Клік на елемент");
+        new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"br-pp-img br-pp-img-grid\"]/child::a"))).click();
+        logger.info("Витягуєм інфо про елемент");
+        WebElement elementInfo = new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div/child::h1[@id=\"br-pr-1\"]")));
+        logger.info("Витягуєм price елементa");
+        WebElement elementPrice = new WebDriverWait(driver, 15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("(//div/span[@itemprop=\"price\"])[1]")));
+        return element;
     }
+
+    WebElement assembleComputer(String accessories, String item) {
+        BrainAutoTest2 brainAutoTest2 = new BrainAutoTest2(driver);
+        brainAutoTest2.menu(accessories);
+        brainAutoTest2.menuAccessories(item);
+        brainAutoTest2.minPrice();
+        return brainAutoTest2.receivingElement();
+    }
+
+    void updatePage() {
+        new WebDriverWait(driver,15).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@class=\"svg-logo-gray\"]"))).click();
+    }
+
 }
+
