@@ -19,18 +19,18 @@ public class Test2 {
     final static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     @Test
-    public void test2() throws InvalidObjectException {
-        System.err.close();
-        System.setErr(System.out);
-        when().get("https://reqres.in/api/users?page=2").then().statusCode(200);
+    public void test2() {
+       /* System.err.close();
+        System.setErr(System.out);*/
+      /*  when().get("https://reqres.in/api/users?page=2").then().statusCode(200);
         Response response = get("https://reqres.in/api/users?page=2");
         String infoJson = response.getBody().asString();
         Page page = GSON.fromJson(infoJson, Page.class);
         for (Page.Data data : page.getData()) {
             System.out.println(data.getAvatar());
-        }
-
-
+        }*/
+        Page page1 = get("https://reqres.in/api/users?page=2").as(Page.class);
+        System.out.println(page1.getPer_page());
     }
 
     //@Test
@@ -39,9 +39,7 @@ public class Test2 {
                 "    \"name\": \"morpheus\",\n" +
                 "    \"job\": \"leader\"\n" +
                 "}").when().post("https://reqres.in/api/users").then().statusCode(201);
-
         when().get("https://reqres.in/api/users").then().statusCode(200);
-
         Response response = get("https://reqres.in/api/users");
         System.out.println(response.getBody().asString());
 

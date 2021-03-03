@@ -120,15 +120,11 @@
             <artifactId>maven-compiler-plugin</artifactId>
             <version>3.8.1</version>
         </dependency>
-
-
-
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>xmlhttprequest</artifactId>
             <version>1.8.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.gwtproject.xhr</groupId>
             <artifactId>gwt-xhr</artifactId>
